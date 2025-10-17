@@ -8,23 +8,30 @@
           "fileOutput": "android/app/google-services.json"
         }
       },
+      "web": {
+        "default": {
+          "projectId": "my-todo-app-8364",
+          "appId": "1:760471908581:web:7cf9377c4cf0aa8ad8a40c",
+          "fileOutput": "lib/firebase_options.dart"
+        }
+      },
+      "ios": {
+        "default": {
+          "projectId": "my-todo-app-8364",
+          "appId": "1:760471908581:ios:3da9b504c5a0a3a7d8a40c",
+          "fileOutput": "ios/Runner/GoogleService-Info.plist"
+        }
+      },
       "dart": {
         "lib/firebase_options.dart": {
           "projectId": "my-todo-app-8364",
           "configurations": {
             "android": "1:760471908581:android:9088274142f6caf6d8a40c",
-            "web": "1:760471908581:web:7cf9377c4cf0aa8ad8a40c"
+            "web": "1:760471908581:web:7cf9377c4cf0aa8ad8a40c",
+            "ios": "1:760471908581:ios:3da9b504c5a0a3a7d8a40c"
           }
         }
       }
     }
-  },
-  "emulators": {
-    "dataconnect": {
-      "dataDir": "dataconnect/.dataconnect/pgliteData"
-    }
-  },
-  "dataconnect": {
-    "source": "dataconnect"
   }
 }

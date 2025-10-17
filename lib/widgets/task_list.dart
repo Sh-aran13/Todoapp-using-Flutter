@@ -8,7 +8,6 @@ import './edit_task_dialog.dart';
 class TaskList extends StatelessWidget {
   const TaskList({super.key});
 
-  // Dialog to CONFIRM DELETION
   Future<void> _showDeleteConfirmDialog(
       BuildContext context, Task task, TaskProvider provider) async {
     return showDialog<void>(
@@ -74,67 +73,70 @@ class TaskList extends StatelessWidget {
     return ListView.builder(
       padding: const EdgeInsets.all(8.0),
       itemCount: tasks.length,
-      itemBuilder: (ctx, i) => Card(
-        key: ValueKey(tasks[i].id), // Unique key for each task item
-        elevation: 3,
-        margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 8),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: ListTile(
-          title: Text(
-            tasks[i].title,
-            style: TextStyle(
-              decoration: tasks[i].isCompleted
-                  ? TextDecoration.lineThrough
-                  : TextDecoration.none,
+      itemBuilder: (ctx, i) {
+        final task = tasks[i];
+        return Card(
+          key: ValueKey(task.id), // Unique key for each task item
+          elevation: 3,
+          margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 8),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: ListTile(
+            title: Text(
+              task.title,
+              style: TextStyle(
+                decoration: task.isCompleted
+                    ? TextDecoration.lineThrough
+                    : TextDecoration.none,
+              ),
+            ),
+            subtitle: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if (task.description != null && task.description!.isNotEmpty)
+                  Text(task.description!),
+                if (task.reminder != null)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 4.0),
+                    child: Text(
+                      'Reminder: ${DateFormat.yMd().add_jm().format(task.reminder!)}',
+                      style: TextStyle(
+                          color: Colors.grey.shade600, fontSize: 12),
+                    ),
+                  ),
+              ],
+            ),
+            leading: Checkbox(
+              value: task.isCompleted,
+              onChanged: (value) {
+                taskProvider.toggleTaskStatus(task.id);
+              },
+            ),
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.edit),
+                  onPressed: () {
+                    showDialog(
+                        context: context,
+                        builder: (ctx) => EditTaskDialog(task: task));
+                  },
+                  tooltip: 'Edit Task',
+                ),
+                IconButton(
+                  icon: const Icon(Icons.delete),
+                  color: Colors.red.shade700,
+                  onPressed: () =>
+                      _showDeleteConfirmDialog(context, task, taskProvider),
+                  tooltip: 'Delete Task',
+                ),
+              ],
             ),
           ),
-          subtitle: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              if (tasks[i].description != null && tasks[i].description!.isNotEmpty)
-                Text(tasks[i].description!),
-              if (tasks[i].reminder != null)
-                Padding(
-                  padding: const EdgeInsets.only(top: 4.0),
-                  child: Text(
-                    'Reminder: ${DateFormat.yMd().add_jm().format(tasks[i].reminder!)}',
-                    style: TextStyle(
-                        color: Colors.grey.shade600, fontSize: 12),
-                  ),
-                ),
-            ],
-          ),
-          leading: Checkbox(
-            value: tasks[i].isCompleted,
-            onChanged: (value) {
-              taskProvider.toggleTaskStatus(tasks[i].id);
-            },
-          ),
-          trailing: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              IconButton(
-                icon: const Icon(Icons.edit),
-                onPressed: () {
-                  showDialog(
-                      context: context,
-                      builder: (ctx) => EditTaskDialog(task: tasks[i]));
-                },
-                tooltip: 'Edit Task',
-              ),
-              IconButton(
-                icon: const Icon(Icons.delete),
-                color: Colors.red.shade700,
-                onPressed: () =>
-                    _showDeleteConfirmDialog(context, tasks[i], taskProvider),
-                tooltip: 'Delete Task',
-              ),
-            ],
-          ),
-        ),
-      ),
+        );
+      },
     );
   }
 }

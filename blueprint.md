@@ -2,27 +2,20 @@
 
 ## Overview
 
-This is a Flutter-based mobile application designed for task management. It allows users to register, log in, and manage their tasks. The application features a modern, visually appealing interface with a focus on user experience.
+This is a to-do list application that allows users to create, view, edit, and delete tasks. The application features a theme provider for light/dark mode switching and uses `go_router` for navigation.
 
 ## Features
 
-### Implemented
+*   **Task Management:** Create, edit, delete, and toggle the status of tasks.
+*   **Theme Provider:** Manages the application's theme, allowing users to switch between light and dark modes.
+*   **Custom Fonts:** Uses Google Fonts to style the text.
+*   **Routing:** Uses the `go_router` package for navigation between the task list and task detail screens.
+*   **State Management:** Uses the `provider` package to manage the state of the tasks.
+*   **Firebase:** Configured with Firebase for Android, iOS, and Web.
+*   **Authentication:** Basic email/password authentication with redirection.
 
-*   **User Authentication:**
-    *   User registration with full name, username, email, and password.
-    *   User login with username and password.
-    *   Secure password handling with visibility toggle.
-*   **UI/UX:**
-    *   Animated backgrounds for login and registration screens.
-    *   Glassmorphism effect for UI containers.
-    *   Custom-styled text fields and buttons.
-    *   Success and error dialogs for user feedback.
+## Plan
 
-### Current Task: Push to GitHub
-
-*   **Objective:** Push the current project state to a new GitHub repository.
-*   **Steps:**
-    1.  Create and update this `blueprint.md` file.
-    2.  Stage all new and modified files for commit.
-    3.  Commit the staged files with a descriptive message.
-    4.  Guide the user on how to publish the branch to a new GitHub repository.
+*   Restructure the application to link all providers, screens, and widgets in `main.dart`.
+*   Implement routing and navigation using `go_router`, with redirects based on authentication state.
+*   Remove the old `lib/router.dart` file.

@@ -1,10 +1,40 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:myapp/widgets/add_task_dialog.dart';
 import 'package:myapp/widgets/home_animated_background.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _scaleAnimation;
+  late Animation<double> _fadeAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 800),
+    )..forward();
+
+    _scaleAnimation = CurvedAnimation(
+      parent: _controller,
+      curve: Curves.easeInOut,
+    );
+
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(_controller);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -75,28 +105,45 @@ class HomeScreen extends StatelessWidget {
         children: [
           const HomeAnimatedBackground(),
           Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                ElevatedButton.icon(
-                  onPressed: () {
-                    showDialog(
-                      context: context,
-                      builder: (ctx) => const AddTaskDialog(),
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    minimumSize: const Size(200, 50),
+            child: GestureDetector(
+              onTap: () => context.push('/tasks'),
+              child: ScaleTransition(
+                scale: _scaleAnimation,
+                child: FadeTransition(
+                  opacity: _fadeAnimation,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(
+                        Icons.check_circle_outline,
+                        size: 80,
+                        color: Colors.tealAccent,
+                      ),
+                      const SizedBox(height: 20),
+                      Text(
+                        'Welcome to Your Task Manager',
+                        textAlign: TextAlign.center,
+                        style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                          color: Colors.tealAccent,
+                          fontWeight: FontWeight.bold,
+                          shadows: [
+                            Shadow(
+                              blurRadius: 10.0,
+                              color: Colors.black.withOpacity(0.5),
+                              offset: const Offset(2.0, 2.0),
+                            ),
+                          ]
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      Text(
+                        'Tap to get started',
+                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Colors.white),
+                      ),
+                    ],
                   ),
-                  icon: const Icon(Icons.add),
-                  label: const Text('Add New Task'),
                 ),
-                const SizedBox(height: 20),
-                ElevatedButton(
-                  onPressed: () => context.push('/tasks'),
-                  child: const Text('View Tasks'),
-                ),
-              ],
+              ),
             ),
           ),
         ],

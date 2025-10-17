@@ -1,138 +1,91 @@
-import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:simple_animations/simple_animations.dart';
+import 'dart:math';
 
-class HomeAnimatedBackground extends StatefulWidget {
+class HomeAnimatedBackground extends StatelessWidget {
   const HomeAnimatedBackground({super.key});
 
   @override
-  State<HomeAnimatedBackground> createState() => _HomeAnimatedBackgroundState();
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        Positioned.fill(
+          child: Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Color(0xFF2C3E50), Color(0xFF000000)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+            ),
+          ),
+        ),
+        const Positioned.fill(child: AnimatedWave(height: 180, speed: 1.0, offset: 0.0)),
+        const Positioned.fill(child: AnimatedWave(height: 120, speed: 0.9, offset: pi)),
+        const Positioned.fill(child: AnimatedWave(height: 220, speed: 1.2, offset: pi / 2)),
+      ],
+    );
+  }
 }
 
-class _HomeAnimatedBackgroundState extends State<HomeAnimatedBackground>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  List<Star>? _stars;
-  final int _starCount = 400;
+class AnimatedWave extends StatelessWidget {
+  final double height;
+  final double speed;
+  final double offset;
 
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 10), // This duration is arbitrary for a continuous loop
-    )..repeat();
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
+  const AnimatedWave({super.key, required this.height, required this.speed, required this.offset});
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        // Use the guaranteed constraints from LayoutBuilder to initialize stars.
-        if (_stars == null && constraints.maxWidth != 0) {
-          final size = Size(constraints.maxWidth, constraints.maxHeight);
-          _stars = List.generate(_starCount, (index) => Star.random(size));
-        }
-
-        // While stars are initializing (on the very first frame), show a black container.
-        if (_stars == null) {
-          return Container(color: Colors.black);
-        }
-
-        // Once ready, build the animation.
-        return Container(
-          color: Colors.black,
-          child: AnimatedBuilder(
-            animation: _controller,
-            builder: (context, child) {
-              return CustomPaint(
-                size: Size(constraints.maxWidth, constraints.maxHeight),
-                painter: StarfieldPainter(_stars!),
-              );
-            },
-          ),
-        );
-      },
-    );
+    return LayoutBuilder(builder: (context, constraints) {
+      return SizedBox(
+        height: height,
+        width: constraints.biggest.width,
+        child: LoopAnimationBuilder<
+            double>(
+          duration: Duration(milliseconds: (5000 / speed).round()),
+          tween: Tween(begin: 0.0, end: 2 * pi),
+          builder: (context, value, child) {
+            return CustomPaint(
+              foregroundPainter: CurvePainter(value + offset, height),
+            );
+          },
+        ),
+      );
+    });
   }
 }
 
-class Star {
-  double x, y, z;
+class CurvePainter extends CustomPainter {
+  final double value;
+  final double waveHeight;
 
-  Star(this.x, this.y, this.z);
-
-  factory Star.random(Size size) {
-    final random = Random();
-    return Star(
-      (random.nextDouble() * size.width) - size.width / 2,
-      (random.nextDouble() * size.height) - size.height / 2,
-      random.nextDouble() * size.width,
-    );
-  }
-
-  void update(Size size) {
-    z = z - 3;
-    if (z < 1) {
-      if (size.isEmpty) return;
-      final random = Random();
-      x = (random.nextDouble() * size.width) - size.width / 2;
-      y = (random.nextDouble() * size.height) - size.height / 2;
-      z = size.width;
-    }
-  }
-}
-
-class StarfieldPainter extends CustomPainter {
-  final List<Star> stars;
-  final Paint starPaint;
-
-  StarfieldPainter(this.stars)
-      : starPaint = Paint()
-          ..color = Colors.white
-          ..strokeCap = StrokeCap.round;
+  CurvePainter(this.value, this.waveHeight);
 
   @override
   void paint(Canvas canvas, Size size) {
-    if (size.isEmpty) return;
+    final white = Paint()..color = Colors.white.withAlpha(60);
+    final path = Path();
 
-    final centerX = size.width / 2;
-    final centerY = size.height / 2;
+    final y1 = sin(value);
+    final y2 = sin(value + pi / 2);
+    final y3 = sin(value + pi);
 
-    for (var star in stars) {
-      star.update(size);
+    final startPointY = size.height * (0.5 + 0.4 * y1);
+    final controlPointY = size.height * (0.5 + 0.4 * y2);
+    final endPointY = size.height * (0.5 + 0.4 * y3);
 
-      if (star.z <= 0) continue;
-
-      final sx = (star.x / star.z) * centerX + centerX;
-      final sy = (star.y / star.z) * centerY + centerY;
-
-      if (sx < 0 || sx > size.width || sy < 0 || sy > size.height) {
-        continue;
-      }
-
-      final pz = star.z + 3;
-      if (pz <= 0) continue;
-
-      final px = (star.x / pz) * centerX + centerX;
-      final py = (star.y / pz) * centerY + centerY;
-
-      final radius = (1 - star.z / size.width) * 2;
-      starPaint.strokeWidth = radius > 0 ? radius : 0;
-
-      if (starPaint.strokeWidth > 0) {
-        canvas.drawLine(Offset(px, py), Offset(sx, sy), starPaint);
-      }
-    }
+    path.moveTo(size.width * 0, startPointY);
+    path.quadraticBezierTo(
+        size.width * 0.5, controlPointY, size.width, endPointY);
+    path.lineTo(size.width, size.height);
+    path.lineTo(0, size.height);
+    path.close();
+    canvas.drawPath(path, white);
   }
 
   @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) {
+  bool shouldRepaint(CustomPainter oldDelegate) {
     return true;
   }
 }

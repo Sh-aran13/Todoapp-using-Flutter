@@ -31,14 +31,15 @@ dependencies:
   flutter:
     sdk: flutter
   # For State Management
-  provider: ^6.1.1 # Use the latest stable version
   # For basic icon/UI elements
   cupertino_icons: ^1.0.6
-  go_router: ^16.2.4
   simple_animations: ^5.2.0
   particles_flutter: ^0.1.4
   google_fonts: ^6.3.2
   intl: ^0.20.2
+  provider: ^6.1.5+1
+  go_router: ^16.2.5
+  firebase_core: ^4.2.0
 
 dev_dependencies:
   flutter_test:
