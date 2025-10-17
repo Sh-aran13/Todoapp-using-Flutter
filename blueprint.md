@@ -1,29 +1,28 @@
-# Task Manager App Blueprint
+# Project Blueprint
 
 ## Overview
 
-This document outlines the features and design of the Task Manager Flutter application. The app allows users to create, manage, and track their daily tasks.
+This is a Flutter-based mobile application designed for task management. It allows users to register, log in, and manage their tasks. The application features a modern, visually appealing interface with a focus on user experience.
 
-## Implemented Features
+## Features
 
-*   **User Authentication:** Secure user registration and login functionality.
-*   **Task Management:**
-    *   Create, edit, and delete tasks.
-    *   Mark tasks as complete or incomplete.
-    *   Set date and time reminders for tasks.
-*   **Visual Feedback:** The app provides visual cues for completed tasks and an animated success message when a new task is added or an existing task is updated.
+### Implemented
 
-## Design
+*   **User Authentication:**
+    *   User registration with full name, username, email, and password.
+    *   User login with username and password.
+    *   Secure password handling with visibility toggle.
+*   **UI/UX:**
+    *   Animated backgrounds for login and registration screens.
+    *   Glassmorphism effect for UI containers.
+    *   Custom-styled text fields and buttons.
+    *   Success and error dialogs for user feedback.
 
-*   **Theme:** The app uses a modern, dark-themed Material Design layout.
-*   **Task List:** Tasks are displayed in an organized list format, with intuitive controls for completion, editing, and deletion.
-*   **Dialogs:** Custom-styled dialogs are used for adding/editing tasks and for user notifications.
-*   **Authentication Screens (Login/Register):**
-    *   **Background:** A dynamic, dark animated particle background.
-    *   **Form Container:** A "glassmorphism" container with a neon border effect that gives it a futuristic glow.
-    *   **Text and Fields:** Light-colored text and custom-styled input fields with icons for a clean and readable user interface.
-    *   **AppBar:** Transparent `AppBar` to ensure the animated background is fully visible, enhancing the immersive experience.
+### Current Task: Push to GitHub
 
-## Current Plan
-
-This section will be updated with the plan for the next set of requested changes.
+*   **Objective:** Push the current project state to a new GitHub repository.
+*   **Steps:**
+    1.  Create and update this `blueprint.md` file.
+    2.  Stage all new and modified files for commit.
+    3.  Commit the staged files with a descriptive message.
+    4.  Guide the user on how to publish the branch to a new GitHub repository.

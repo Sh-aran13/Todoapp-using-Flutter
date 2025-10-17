@@ -59,17 +59,21 @@ class _RegisterScreenState extends State<RegisterScreen> {
       _passwordController.text,
     );
 
-    if (mounted) {
-      if (success) {
-        showDialog(
-          context: context,
-          builder: (ctx) => const SuccessDialog(message: 'Registration Successful!'),
-        ).then((_) => context.go('/login'));
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Registration failed. Please try again.')),
-        );
-      }
+    if (!mounted) return;
+
+    if (success) {
+      showDialog(
+        context: context,
+        builder: (ctx) => const SuccessDialog(message: 'Registration Successful!'),
+      ).then((_) {
+        if (mounted) {
+          context.go('/login');
+        }
+      });
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Registration failed. Please try again.')),
+      );
     }
   }
 

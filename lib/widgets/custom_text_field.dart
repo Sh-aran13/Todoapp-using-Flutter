@@ -10,6 +10,7 @@ class CustomTextField extends StatelessWidget {
   final TextStyle? inputStyle;
   final IconData? prefixIcon;
   final Color? iconColor;
+  final Widget? suffixIcon;
 
   const CustomTextField({
     super.key,
@@ -22,6 +23,7 @@ class CustomTextField extends StatelessWidget {
     this.inputStyle,
     this.prefixIcon,
     this.iconColor,
+    this.suffixIcon,
   });
 
   @override
@@ -33,6 +35,7 @@ class CustomTextField extends StatelessWidget {
         labelText: labelText,
         labelStyle: labelStyle,
         prefixIcon: prefixIcon != null ? Icon(prefixIcon, color: iconColor) : null,
+        suffixIcon: suffixIcon,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(30.0),
           borderSide: BorderSide.none,

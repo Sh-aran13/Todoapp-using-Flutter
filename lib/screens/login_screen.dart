@@ -16,11 +16,13 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final _usernameController = TextEditingController();
-  final _passwordController = TextEditingController();
+  final _passwordFieldKey = GlobalKey<_PasswordFieldState>();
 
   void _submit() async {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
-    if (_usernameController.text.isEmpty || _passwordController.text.isEmpty) {
+    final password = _passwordFieldKey.currentState?._passwordController.text ?? '';
+
+    if (_usernameController.text.isEmpty || password.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please fill in all fields.')),
       );
@@ -29,7 +31,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
     final success = await authProvider.login(
       _usernameController.text,
-      _passwordController.text,
+      password,
       notify: false,
     );
 
@@ -97,7 +99,6 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   void dispose() {
     _usernameController.dispose();
-    _passwordController.dispose();
     super.dispose();
   }
 
@@ -140,15 +141,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           iconColor: Colors.white70,
                         ),
                         const SizedBox(height: 20),
-                        CustomTextField(
-                          controller: _passwordController,
-                          labelText: 'Password',
-                          obscureText: true,
-                          labelStyle: const TextStyle(color: Colors.white70),
-                          inputStyle: const TextStyle(color: Colors.white),
-                          prefixIcon: Icons.lock_outline,
-                          iconColor: Colors.white70,
-                        ),
+                        PasswordField(key: _passwordFieldKey),
                         const SizedBox(height: 40),
                         ElevatedButton(
                           onPressed: _submit,
@@ -192,5 +185,47 @@ class _LoginScreenState extends State<LoginScreen> {
         ],
       ),
     );
+  }
+}
+
+class PasswordField extends StatefulWidget {
+  const PasswordField({super.key});
+
+  @override
+  State<PasswordField> createState() => _PasswordFieldState();
+}
+
+class _PasswordFieldState extends State<PasswordField> {
+  bool _obscureText = true;
+  final _passwordController = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
+    return CustomTextField(
+      controller: _passwordController,
+      labelText: 'Password',
+      obscureText: _obscureText,
+      labelStyle: const TextStyle(color: Colors.white70),
+      inputStyle: const TextStyle(color: Colors.white),
+      prefixIcon: Icons.lock_outline,
+      iconColor: Colors.white70,
+      suffixIcon: IconButton(
+        icon: Icon(
+          _obscureText ? Icons.visibility : Icons.visibility_off,
+          color: Colors.white70,
+        ),
+        onPressed: () {
+          setState(() {
+            _obscureText = !_obscureText;
+          });
+        },
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _passwordController.dispose();
+    super.dispose();
   }
 }
